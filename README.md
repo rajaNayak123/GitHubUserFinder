@@ -1,12 +1,64 @@
-# React + Vite
+# GitHub User Finder 🔍
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A **responsive and interactive** web application built with **React.js** that allows users to search for GitHub profiles and view detailed information about them. The app fetches real-time data from the **GitHub Users API** and presents it in a clean, user-friendly interface.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. 🔎 Live Search Bar
+- Positioned at the top of the page.
+- Users can type a GitHub username to search.
+- Fetches and displays matching GitHub users **as you type** using the GitHub API.
 
-## Expanding the ESLint configuration
+### 2. 👥 User List Display
+- Dynamically displays a list of users based on the current search query.
+- Each user card shows:
+  - Profile picture
+  - Username
+  - A clickable link/button to view more details
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 3. 📄 User Details View
+- On clicking a user card, detailed information is shown, including:
+  - Full Name (if available)
+  - Bio
+  - Number of Public Repositories
+  - Followers and Following count
+  - Link to GitHub Profile
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React.js, Tailwind CSS (or your preferred styling)
+- **API**: [GitHub Users API](https://api.github.com/users)
+
+## 📦 Installation
+
+1. Clone the repository:
+   ```bash
+     git clone https://github.com/yourusername/github-user-finder.git
+     cd github-user-finder
+   ```
+
+2 Install dependencies:
+
+   ```bash
+      npm install
+   ```
+3 Run the development server:
+
+   ```bash
+    npm start
+   ```
+### 🌐 Live Demo
+
+  Coming Soon! (or add a link if deployed)
+
+### 📸 Screenshots
+
+  Include a few UI screenshots here to showcase the app.
+
+## 🧑‍💻 Author
+
+Made with ❤️ by Raja Nayak
+  
+  Want to integrate this into a bigger app like a customer support system, team chat, or AI chatbot? I'm happy to help.
+
+
