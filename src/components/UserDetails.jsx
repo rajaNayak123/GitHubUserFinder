@@ -1,60 +1,181 @@
-import { ExternalLink, Users, GitFork, BookOpen } from "lucide-react";
+"use client"
 
-function UserDetails({ user }) {
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
+import { Badge } from "../components/ui/badge"
+import { Button } from "../components/ui/button"
+import { Skeleton } from "../components/ui/skeleton"
+import { ExternalLink, Users, GitFork, X, MapPin, Building, Calendar } from "lucide-react"
+
+ function UserDetails({ username, onClose }) {
+  const [userDetails, setUserDetails] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      setLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch(`https://api.github.com/users/${username}`)
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user details")
+        }
+
+        const data = await response.json()
+        setUserDetails(data)
+      } catch (err) {
+        setError("Error fetching user details")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserDetails()
+  }, [username])
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <Skeleton className="h-8 w-[200px]" />
+          <Skeleton className="h-8 w-8 rounded-full" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-4">
+            <Skeleton className="h-20 w-20 rounded-full" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error || !userDetails) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center">
+            <p className="text-destructive mb-4">{error || "Failed to load user details"}</p>
+            <Button onClick={onClose} variant="outline">
+              Close
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  }
+
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="bg-gray-50 pb-0 p-6">
-        <div className="flex flex-col md:flex-row items-center gap-6 pb-6">
-          <div className="w-32 h-32 rounded-full overflow-hidden">
-            <img
-              src={user.avatar_url || "/placeholder.svg"}
-              alt={`${user.login}'s avatar`}
-              className="w-full h-full object-cover"
-            />
+    <Card className="h-fit overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between pb-2 bg-muted/50">
+        <CardTitle className="text-xl">{userDetails.name || userDetails.login}</CardTitle>
+        <Button variant="ghost" size="icon" onClick={onClose} className="hover:bg-background/80">
+          <X className="h-4 w-4" />
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-6 p-6">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Avatar className="h-24 w-24 border-4 border-background shadow-md">
+              <AvatarImage src={userDetails.avatar_url || "/placeholder.svg"} alt={userDetails.login} />
+              <AvatarFallback>{userDetails.login.slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </motion.div>
+          <div className="space-y-2">
+            <div>
+              <h3 className="font-medium text-lg">@{userDetails.login}</h3>
+              {userDetails.bio && <p className="text-muted-foreground">{userDetails.bio}</p>}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {userDetails.location && (
+                <Badge variant="outline" className="flex items-center gap-1 bg-background">
+                  <MapPin className="h-3 w-3" />
+                  {userDetails.location}
+                </Badge>
+              )}
+              {userDetails.company && (
+                <Badge variant="outline" className="flex items-center gap-1 bg-background">
+                  <Building className="h-3 w-3" />
+                  {userDetails.company}
+                </Badge>
+              )}
+              <Badge variant="outline" className="flex items-center gap-1 bg-background">
+                <Calendar className="h-3 w-3" />
+                Joined {formatDate(userDetails.created_at)}
+              </Badge>
+            </div>
           </div>
-          <div className="text-center md:text-left">
-            <h2 className="text-2xl font-bold">{user.name || user.login}</h2>
-            <p className="text-gray-500 mb-2">@{user.login}</p>
-            <button
-              className="mt-2 px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center"
-              onClick={() => window.open(user.html_url, "_blank")}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { icon: GitFork, label: "Repositories", value: userDetails.public_repos },
+            { icon: Users, label: "Followers", value: userDetails.followers },
+            { icon: Users, label: "Following", value: userDetails.following },
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
             >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              View on GitHub
-            </button>
-          </div>
+              <Card className="overflow-hidden">
+                <CardContent className="p-4 flex flex-col items-center justify-center bg-gradient-to-br from-background to-muted">
+                  <div className="text-2xl font-bold">{item.value}</div>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </div>
-      <div className="p-6">
-        {user.bio && (
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-2">Bio</h3>
-            <p className="text-gray-700">{user.bio}</p>
-          </div>
-        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-            <BookOpen className="h-6 w-6 text-gray-700 mb-2" />
-            <span className="text-2xl font-bold">{user.public_repos}</span>
-            <span className="text-gray-500">Repositories</span>
-          </div>
-
-          <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-            <Users className="h-6 w-6 text-gray-700 mb-2" />
-            <span className="text-2xl font-bold">{user.followers}</span>
-            <span className="text-gray-500">Followers</span>
-          </div>
-
-          <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
-            <GitFork className="h-6 w-6 text-gray-700 mb-2" />
-            <span className="text-2xl font-bold">{user.following}</span>
-            <span className="text-gray-500">Following</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+        <motion.div
+          className="flex justify-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+        >
+          <Button
+            variant="default"
+            className="w-full sm:w-auto group"
+            onClick={() => window.open(userDetails.html_url, "_blank")}
+          >
+            <ExternalLink className="h-4 w-4 mr-2 group-hover:translate-x-1 transition-transform" />
+            View GitHub Profile
+          </Button>
+        </motion.div>
+      </CardContent>
+    </Card>
+  )
 }
-
-export default UserDetails;
+export {UserDetails}

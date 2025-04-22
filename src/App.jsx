@@ -1,5 +1,5 @@
 import React from "react";
-import GitHubSearch from "./components/GitHubSearch.jsx"
+import {GitHubSearch} from "./components/GitHubSearch.jsx"
 
 const App = () => {
 
