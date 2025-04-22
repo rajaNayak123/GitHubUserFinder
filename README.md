@@ -26,7 +26,7 @@ A **responsive and interactive** web application built with **React.js** that al
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js, Tailwind CSS (or your preferred styling)
+- **Frontend**: React.js, Tailwind CSS , Shadcn, Lucid react
 - **API**: [GitHub Users API](https://api.github.com/users)
 
 ## 📦 Installation
@@ -49,7 +49,7 @@ A **responsive and interactive** web application built with **React.js** that al
    ```
 ### 🌐 Live Demo
 
-  Coming Soon! (or add a link if deployed)
+  The application is currently deployed and can be accessed at:  🔗 [Live Demo](https://git-hub-user-finder-cyan.vercel.app/)
 
 ### 📸 Screenshots
 
