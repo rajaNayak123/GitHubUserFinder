@@ -7,35 +7,51 @@ import { Button } from "../components/ui/button"
 import { Skeleton } from "../components/ui/skeleton"
 import { ExternalLink, Users, GitFork, X, MapPin, Building, Calendar } from "lucide-react"
 
- function UserDetails({ username, onClose }) {
+function UserDetails({ username, onClose }) {
   const [userDetails, setUserDetails] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const response = await fetch(`https://api.github.com/users/${username}`)
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user details")
-        }
-
-        const data = await response.json()
-        setUserDetails(data)
-      } catch (err) {
-        setError("Error fetching user details")
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
+  const fetchUserDetails = async () => {
+    if (!username) {
+      setError("Username is missing")
+      setLoading(false)
+      return
     }
 
+    setLoading(true)
+    setError(null)
+
+    try {
+      const url = `https://api.github.com/users/${username}`
+      console.log("Fetching:", url)
+
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`GitHub API returned ${response.status}: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      setUserDetails(data)
+    } catch (err) {
+      console.error("Fetch error:", err)
+      setError(err.message || "Unknown error")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchUserDetails()
   }, [username])
+
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
 
   if (loading) {
     return (
@@ -66,24 +82,15 @@ import { ExternalLink, Users, GitFork, X, MapPin, Building, Calendar } from "luc
   if (error || !userDetails) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="text-center">
-            <p className="text-destructive mb-4">{error || "Failed to load user details"}</p>
-            <Button onClick={onClose} variant="outline">
-              Close
-            </Button>
+        <CardContent className="p-6 text-center space-y-4">
+          <p className="text-destructive">{error || "Failed to load user details"}</p>
+          <div className="flex justify-center gap-2">
+            <Button onClick={fetchUserDetails}>Retry</Button>
+            <Button onClick={onClose} variant="outline">Close</Button>
           </div>
         </CardContent>
       </Card>
     )
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
   }
 
   return (
@@ -176,4 +183,5 @@ import { ExternalLink, Users, GitFork, X, MapPin, Building, Calendar } from "luc
     </Card>
   )
 }
-export {UserDetails}
+
+export { UserDetails }
