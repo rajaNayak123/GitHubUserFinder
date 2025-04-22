@@ -55,6 +55,9 @@ A **responsive and interactive** web application built with **React.js** that al
 
   Include a few UI screenshots here to showcase the app.
 
+<img width="1433" alt="Screenshot 2025-04-22 at 9 55 18 AM" src="https://github.com/user-attachments/assets/955cb687-1777-4dfb-b533-e39b787e81c7" />
+<img width="1433" alt="Screenshot 2025-04-22 at 11 12 27 AM" src="https://github.com/user-attachments/assets/a38c30b3-a511-4353-a087-21ffd473cac5" />
+
 ## 🧑‍💻 Author
 
 Made with ❤️ by Raja Nayak
