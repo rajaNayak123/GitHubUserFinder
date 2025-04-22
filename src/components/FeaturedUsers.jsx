@@ -1,37 +1,46 @@
-"use client"
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Button } from "../components/ui/button";
+import { Skeleton } from "../components/ui/skeleton";
+import { ExternalLink } from "lucide-react";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { ExternalLink } from "lucide-react"
-
- function FeaturedUsers({ onSelectUser }) {
-  const [featuredUsers, setFeaturedUsers] = useState([])
-  const [loading, setLoading] = useState(true)
+function FeaturedUsers({ onSelectUser }) {
+  const [featuredUsers, setFeaturedUsers] = useState([]);
 
   useEffect(() => {
-    const fetchFeaturedUsers = async () => {
-      setLoading(true)
-      try {
-        // Fetch some popular GitHub users
-        const response = await fetch("https://api.github.com/search/users?q=followers:>10000&per_page=4")
-        const data = await response.json()
-        setFeaturedUsers(data.items || [])
-      } catch (error) {
-        console.error("Error fetching featured users:", error)
-        setFeaturedUsers([])
-      } finally {
-        setLoading(false)
-      }
-    }
+    const customUsers = [
+      {
+        id: "153702745",
+        login: "rajaNayak123",
+        avatar_url: "https://avatars.githubusercontent.com/u/153702745?v=4",
+        html_url: "https://github.com/rajaNayak123",
+      },
+      {
+        id: "153702744",
+        login: "PiyushPanwarFST",
+        avatar_url: "https://avatars.githubusercontent.com/u/153702744?v=4",
+        html_url: "https://github.com/PiyushPanwarFST",
+      },
+      {
+        id: "110075716",
+        login: "rishavtarway",
+        avatar_url: "https://avatars.githubusercontent.com/u/110075716?v=4",
+        html_url: "https://github.com/rishavtarway",
+      },
+      {
+        id: "152836307",
+        login: "avinashkrsingh01",
+        avatar_url: "https://avatars.githubusercontent.com/u/152836307?v=4",
+        html_url: "https://github.com/avinashkrsingh01",
+      },
+    ];
 
-    fetchFeaturedUsers()
-  }, [])
+    setFeaturedUsers(customUsers);
+  }, []);
 
-  if (loading) {
+  if (featuredUsers.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -51,7 +60,7 @@ import { ExternalLink } from "lucide-react"
             ))}
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -74,11 +83,21 @@ import { ExternalLink } from "lucide-react"
             transition={{ duration: 0.3, delay: index * 0.1 }}
             whileHover={{ y: -5 }}
           >
-            <Card className="border border-muted overflow-hidden">
+            <Card className="border border-muted overflow-hidden relative">
+              {user.login === "rajaNayak123" && (
+                <span className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-0.5 rounded-full z-10">
+                  You
+                </span>
+              )}
               <CardContent className="p-4 flex flex-col items-center text-center space-y-3">
                 <Avatar className="h-16 w-16 border-2 border-background shadow-md">
-                  <AvatarImage src={user.avatar_url || "/placeholder.svg"} alt={user.login} />
-                  <AvatarFallback>{user.login.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarImage
+                    src={user.avatar_url || "/placeholder.svg"}
+                    alt={user.login}
+                  />
+                  <AvatarFallback>
+                    {user.login.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-medium">{user.login}</h3>
@@ -92,7 +111,12 @@ import { ExternalLink } from "lucide-react"
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => onSelectUser(user.login)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => onSelectUser(user.login)}
+                >
                   View Details
                 </Button>
               </CardContent>
@@ -101,6 +125,7 @@ import { ExternalLink } from "lucide-react"
         ))}
       </CardContent>
     </Card>
-  )
+  );
 }
-export {FeaturedUsers}
+
+export { FeaturedUsers };
